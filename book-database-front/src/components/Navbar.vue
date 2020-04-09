@@ -1,10 +1,10 @@
 <template>
 <nav>
-    <v-toolbar flat app>
+    <v-toolbar  prominent flat app dark color="blue darken-2">
         <v-spacer />
-        <v-toolbar-title class="grey--text text--darken-2">
-            <v-icon large color="blue darken-2">library_books</v-icon>
-            <span center class="font-weigth-light">Find My Book</span>
+        <v-toolbar-title light> 
+                <v-icon large dark>library_books</v-icon>
+                <span center class="font-weigth-light">Find My Book</span>
         </v-toolbar-title>
         <v-spacer />
     </v-toolbar>

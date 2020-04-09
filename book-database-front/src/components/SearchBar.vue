@@ -1,6 +1,6 @@
 <template>
 <div>
-  <v-toolbar dark color="blue darken-2" >
+  <v-toolbar dark app flat color="blue darken-2" >
     <v-spacer/>
     <v-autocomplete
       v-model="select"
@@ -11,7 +11,7 @@
       flat
       hide-no-data
       hide-details
-      label="Search for Books, authors and titles"
+      label="Search for Books, authors, ISBN and topics"
       solo-inverted
     ></v-autocomplete>
     <v-btn icon>

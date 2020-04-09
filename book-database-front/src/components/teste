@@ -1,0 +1,30 @@
+<template>
+  <v-container>
+    <div class="result">
+      <v-row align="center">
+        <v-card flat v-for="book in books" :key="book.id">
+          <v-layout row wrap>
+            <v-flex xs2 sm4 md8>
+              <div class="caption grey--text">Book title</div>
+              <p>Titulo do livro</p>
+              <div>Outras informacoes</div>
+            </v-flex>
+            <v-flex xs2 sm4 md8>
+              <div class="caption grey--text">Book title</div>
+              <p>imagem</p>
+              <div>Outras informacoes</div>
+            </v-flex>
+          </v-layout>
+        </v-card>
+      </v-row>
+    </div>
+  </v-container>
+</template>
+    <v-row justify="center">
+      <div class="text-center">
+        <v-btn class="ma-2" outlined color="orange">
+          Add Book
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+      </div>
+      <v-btn color="primary" class="ma-2" dark @click="dialog2 = true">Open Dialog 2</v-btn>

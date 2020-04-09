@@ -1,7 +1,7 @@
-import { http } from './config'
+import {http} from './config'
 
-export default {
+export default{
     list:() => {
-        return http.get('books')
+        return http.get('produtos')
     }
 }
