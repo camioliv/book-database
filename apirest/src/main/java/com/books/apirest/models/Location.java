@@ -20,8 +20,6 @@ import javax.persistence.Inheritance;
 discriminatorType = DiscriminatorType.INTEGER)
 public class Location {
 	
-	private static final long serialVersionUID = 1L;
-	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id;
