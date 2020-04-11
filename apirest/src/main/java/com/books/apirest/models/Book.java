@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -36,6 +37,10 @@ public class Book implements Serializable{
 	joinColumns = @JoinColumn(name = "book_id"),
 	inverseJoinColumns = @JoinColumn(name = "author_id"))
 	private Set<Author> authors;
+	
+	@ManyToOne
+	@JoinColumn(name="location_id", nullable=false)
+	private Location location;
 	
 	
 	public long getId() {
@@ -80,6 +85,11 @@ public class Book implements Serializable{
 	public void setAuthors(Set<Author> authors) {
 		this.authors = authors;
 	}
-	
+	public Location getLocation() {
+		return location;
+	}
+	public void setLocation(Location location) {
+		this.location = location;
+	}	
 
 }
