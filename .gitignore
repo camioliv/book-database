@@ -1,0 +1,4 @@
+book-database-front/.vscode/*
+book-database-front/node_modules/.cache/*
+book-database-front/npm-debug.log
+

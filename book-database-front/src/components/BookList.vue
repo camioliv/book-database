@@ -1,6 +1,11 @@
 <template>
   <v-container>
-    <v-row justify="center">
+    <v-card flat class="text-center text-light" v-if="!books.length">
+      <p>
+        Sorry. No books were found...
+      </p>  
+    </v-card>
+    <v-row justify="right">
       <v-col v-for="book of books" :key="book.id" cols="auto">
         <v-card :elevation="5" height="170" width="344">
           <v-row class="fill-height" align="center" justify="center">
@@ -24,6 +29,13 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-card flat class="text-center text-light regular" v-if="books.length">
+    <v-pagination
+      v-model="page"
+      :length="books.length"
+      :total-visible="7"
+    ></v-pagination>
+  </v-card>
   </v-container>
 </template>
 

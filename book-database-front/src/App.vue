@@ -21,6 +21,6 @@ export default {
   components: {Navbar, SearchBar, BookList, AddBook},
   data: () => ({
     //
-  }),
+  })
 };
 </script>

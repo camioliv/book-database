@@ -11,7 +11,7 @@
       flat
       hide-no-data
       hide-details
-      label="Search for Books, authors, ISBN and topics"
+      label="Search for Books, Authors, ISBN and topics"
       solo-inverted
     ></v-autocomplete>
     <v-btn icon>
