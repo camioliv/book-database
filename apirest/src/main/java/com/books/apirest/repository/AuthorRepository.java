@@ -9,6 +9,5 @@ public interface AuthorRepository extends JpaRepository<Author, Long>{
 	
 	Author findById(long id);
 	
-	@Query("select a from Author a where a.name = ?1")
 	Author findByName(String name);
 }
