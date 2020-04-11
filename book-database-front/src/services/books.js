@@ -1,4 +1,5 @@
 import {http} from './config'
+import {httpIsbn} from './isbndbConfig'
 
 export default{
     list:() => {
@@ -9,5 +10,8 @@ export default{
     }, 
     listByISBN:(isbn) => {
         return http.get('book/'+isbn)
-    }
+    },
+    extSearchISBN:(isbn)=> {
+        return httpIsbn.get('book/'+isbn)
+    },
 }
