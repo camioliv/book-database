@@ -1,13 +1,20 @@
 package com.books.apirest.models;
 
 import java.io.Serializable;
+import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="books")
 public class Book implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
@@ -16,10 +23,20 @@ public class Book implements Serializable{
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id;
 	
+	@Column(name="title", nullable=false)
 	private String title;
+	
 	private String isbn;
 	private String isbn13;
 	private int pages;
+	private String image;
+	
+	@ManyToMany
+	@JoinTable(name="books_authors", 
+	joinColumns = @JoinColumn(name = "book_id"),
+	inverseJoinColumns = @JoinColumn(name = "author_id"))
+	private Set<Author> authors;
+	
 	
 	public long getId() {
 		return id;
@@ -50,6 +67,18 @@ public class Book implements Serializable{
 	}
 	public void setPages(int pages) {
 		this.pages = pages;
+	}
+	public String getImage() {
+		return image;
+	}
+	public void setImage(String image) {
+		this.image = image;
+	}
+	public Set<Author> getAuthors() {
+		return authors;
+	}
+	public void setAuthors(Set<Author> authors) {
+		this.authors = authors;
 	}
 	
 
