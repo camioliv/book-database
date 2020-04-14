@@ -1,15 +1,13 @@
 <template>
   <v-container>
     <v-card flat class="text-center text-light" v-if="!books.length">
-      <p>
-        Sorry. No books were found...
-      </p>  
+      <p>Sorry. No books were found...</p>
     </v-card>
     <v-row justify="right">
-      <v-col v-for="book of books" :key="book.id" cols="auto">
+      <v-col v-for="book of books" :key="book.id" flat cols="auto">
         <v-card :elevation="5" height="170" width="344">
           <v-row class="fill-height" align="center" justify="center">
-            <v-card class=" fill-height mx-auto" max-width="344" outlined>
+            <v-card class="fill-height mx-auto" max-width="344" outlined>
               <v-list-item three-line>
                 <v-list-item-content>
                   <div class="overline mb-4">OVERLINE</div>
@@ -30,30 +28,25 @@
       </v-col>
     </v-row>
     <v-card flat class="text-center text-light regular" v-if="books.length">
-    <v-pagination
-      v-model="page"
-      :length="books.length"
-      :total-visible="7"
-    ></v-pagination>
-  </v-card>
+      <v-pagination v-model="page" :length="books.length" :total-visible="7"></v-pagination>
+    </v-card>
   </v-container>
 </template>
 
 
 <script>
-import Book from '@/services/books'
+import Book from "@/services/books";
 export default {
-  data(){
-    return{
+  data() {
+    return {
       books: []
-    }
+    };
   },
-  mounted(){
+  mounted() {
     Book.list().then(response => {
-      console.log(response.data)
-      this.books = response.data
-
-    })
+      console.log(response.data);
+      this.books = response.data;
+    });
   }
 };
 </script>

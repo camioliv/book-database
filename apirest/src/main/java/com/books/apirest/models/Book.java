@@ -41,6 +41,7 @@ public class Book implements Serializable{
 	@ManyToOne
 	@JoinColumn(name="location_id", nullable=false)
 	private Location location;
+	private boolean favorite;
 	
 	
 	public long getId() {
@@ -90,6 +91,12 @@ public class Book implements Serializable{
 	}
 	public void setLocation(Location location) {
 		this.location = location;
+	}
+	public boolean isFavorite() {
+		return favorite;
+	}
+	public void setFavorite(boolean favorite) {
+		this.favorite = favorite;
 	}	
 
 }
