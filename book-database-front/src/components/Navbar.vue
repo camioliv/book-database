@@ -4,7 +4,7 @@
         <v-spacer />
         <v-toolbar-title dark> 
                 <v-icon large dark>library_books</v-icon>
-                <span center class="font-weigth-light">Find My Book</span>
+                <span center class="font-weight-bold display-1">Find My Book</span>
         </v-toolbar-title>
         <v-spacer />
     </v-toolbar>

@@ -3,8 +3,8 @@
     <Navbar/>
     <SearchBar/>   
     <v-content>
+      <AddBook/>      
       <BookList/>
-      <AddBook/>
       <router-view></router-view>
     </v-content>
   </v-app>

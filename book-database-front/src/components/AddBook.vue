@@ -54,7 +54,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text v-on:click="dialog = false">Close</v-btn>
+          <v-btn color="blue darken-1" text v-on:click="addBook = false">Close</v-btn>
           <v-btn color="blue darken-1" text v-on:click="saveBook">Save</v-btn>
         </v-card-actions>
       </v-card>
@@ -103,7 +103,7 @@ export default {
     descriptionLimit: 30,
     disableFields: false,
     bookInLibrary: false,
-    refreshLocations:false,
+    refreshLocations: false,
     locations: {
       id: 0,
       name: ""
@@ -122,6 +122,7 @@ export default {
       title: "",
       pages: "",
       image: "",
+      authors: [],
       location: {
         id: 0,
         name: ""
@@ -142,7 +143,9 @@ export default {
         .catch(error => {
           console.log(error);
         })
-        .finally(() => (this.loading = false, this.refreshLocations =false));
+        .finally(
+          () => ((this.loading = false), (this.refreshLocations = false))
+        );
     }
   },
   methods: {
@@ -162,9 +165,9 @@ export default {
         (this.box = this.location),
           Box.save(this.box)
             .then(response => {
-              this.book.location = response.data,
-              this.addLocation = false, 
-              this.refreshLocations = true
+              (this.book.location = response.data),
+                (this.addLocation = false),
+                (this.refreshLocations = true);
             })
             .catch(error => {
               console.log(error);

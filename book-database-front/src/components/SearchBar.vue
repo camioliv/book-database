@@ -29,7 +29,8 @@ export default {
   data: () => ({
     loading: false,
     books: [],
-    select: null
+    select: null,
+    search: null
   }),
 
   watch: {
