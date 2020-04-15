@@ -33,7 +33,7 @@ public class BookService {
 		List<Rating> ratings = ratingRepository.findAllByUser(userId);
 		
 		try {
-			DataModel userBooks = RatingsToDataModel(ratings);
+			DataModel userBooks = ratingsToDataModel(ratings);
 			Recommender recommender = new BookRecommenderBuilder().buildRecommender(userBooks);
 			List<RecommendedItem> recommendations = recommender.recommend(userId, 10, false);
 			
@@ -50,7 +50,7 @@ public class BookService {
 	}
 
 	
-	private DataModel RatingsToDataModel(List<Rating> ratings) throws ApiRestException{
+	private DataModel ratingsToDataModel(List<Rating> ratings) throws ApiRestException{
 			
 			StringBuffer fileBuffer = new StringBuffer();
 			File file = null;

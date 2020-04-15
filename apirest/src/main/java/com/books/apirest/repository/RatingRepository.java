@@ -8,7 +8,7 @@ import com.books.apirest.models.Rating;
 
 public interface RatingRepository extends JpaRepository<Rating, Long> {
 	
-	List<Rating> findAllByUser(long user_id);
-	
-	List<Rating> findAllByBook(long user_id);
+	Rating findById(long id);
+	List<Rating> findAllByUser(long userId);
+	List<Rating> findAllByBook(long bookId);
 }
