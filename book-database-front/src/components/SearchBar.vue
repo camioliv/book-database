@@ -3,6 +3,7 @@
     <v-toolbar dark app flat color="blue darken-2">
       <v-spacer />
       <v-autocomplete
+        class="headline font-weight-medium"
         v-model="select"
         :loading="loading"
         :items="books"

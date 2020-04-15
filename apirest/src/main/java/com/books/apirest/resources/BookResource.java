@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.books.apirest.repository.BookRepository;
 import com.books.apirest.models.Book;
+import com.books.apirest.services.BookService;
 
 @CrossOrigin
 @RestController
@@ -23,6 +24,9 @@ public class BookResource {
 
 	@Autowired
 	BookRepository bookRepository;
+	
+	@Autowired
+	private BookService booksService;
 	
 	@GetMapping("/books")
 	public List<Book> listBooks(){
@@ -48,5 +52,11 @@ public class BookResource {
 	public Book updateBook(@RequestBody Book book) {
 		return bookRepository.save(book);
 	}
+	
+	@GetMapping("/books/recomend")
+	public List<Book> recommendBooks(long user_id){
+		return booksService.recomendBooks(user_id);
+	}	
+	
 	
 }

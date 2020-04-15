@@ -12,6 +12,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -41,8 +42,13 @@ public class Book implements Serializable{
 	@ManyToOne
 	@JoinColumn(name="location_id", nullable=false)
 	private Location location;
-	private boolean favorite;
 	
+	@OneToMany(mappedBy = "book")
+	private Set<Rating> ratings;	
+	
+	public Book() {
+
+	}
 	
 	public long getId() {
 		return id;
@@ -92,11 +98,12 @@ public class Book implements Serializable{
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-	public boolean isFavorite() {
-		return favorite;
+	public Set<Rating> getRatings() {
+		return ratings;
 	}
-	public void setFavorite(boolean favorite) {
-		this.favorite = favorite;
-	}	
+	public void setRatings(Set<Rating> ratings) {
+		this.ratings = ratings;
+	}
+	
 
 }

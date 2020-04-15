@@ -28,6 +28,17 @@ public class Location {
 	@OneToMany(mappedBy="location")
 	private Set<Book> books;
 	
+		
+	public Location() {
+
+	}
+	
+	public Location(long id, String name, Set<Book> books) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.books = books;
+	}
 	public String getName() {
 		return name;
 	}
