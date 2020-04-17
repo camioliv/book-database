@@ -1,6 +1,9 @@
 package com.books.apirest.services;
 
+import java.io.BufferedWriter;
 import java.io.File;
+
+import java.io.FileWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +31,18 @@ public class BookService {
 	@Autowired
 	private RatingRepository ratingRepository;
 	
-	public List<Book> recomendBooks(Long userId) throws ApiRestException {
+	public List<Book> findBooks(String query){
+		if (query == null||query.isEmpty()){
+			return bookRepository.findAll();
+		}else {
+			query = query.toLowerCase();
+			return bookRepository.findAllByTitleContainingOrIsbnEqualsOrAuthorsNameContainingOrTopicsEquals(query, query, query, query);
+		}
+	}	
+	
+	public List<Book> recomendBooks(long userId) throws ApiRestException {
 		List<Book> booksRecomended = new ArrayList<Book>();
-		List<Rating> ratings = ratingRepository.findAllByUser(userId);
+		List<Rating> ratings = ratingRepository.findAllByUserId(userId);
 		
 		try {
 			DataModel userBooks = ratingsToDataModel(ratings);
@@ -51,30 +63,26 @@ public class BookService {
 
 	
 	private DataModel ratingsToDataModel(List<Rating> ratings) throws ApiRestException{
-			
-			StringBuffer fileBuffer = new StringBuffer();
-			File file = null;
-			LocalDate today = LocalDate.now();	
-			String fileName = "file_"+today.toString()+".csv";
-			FileDataModel fileDataModel = null;
-			
+		LocalDate today = LocalDate.now();	
+		String fileName = "file_"+today.toString()+".csv";			
+		File file = new File(System.getProperty("java.io.tmpdir") + File.separator + fileName);;
+		FileDataModel fileDataModel = null;
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 			for (Rating rating : ratings ) {
 				String line = "" + rating.getUser().getId();
 				line = line + "," + rating.getBook().getId();
 				line = line + "," + rating.getStars();
-				
-				fileBuffer.append(line);
-			}  		
-			
-			try {
-	 
-				file = new File(System.getProperty("java.io.tmpdir") + File.separator + fileName);			
-				
-				fileDataModel = new FileDataModel(file);
-				
-			} catch (Exception e) {
-				throw new ApiRestException(e.getMessage());
+				writer.write(line);
 			}
-			return fileDataModel;
+			
+			writer.close();
+									
+			fileDataModel = new FileDataModel(file);
+			
+		} catch (Exception e) {
+			throw new ApiRestException(e.getMessage());
 		}
+		return fileDataModel;
+	}
 }

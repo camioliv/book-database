@@ -1,9 +1,14 @@
 package com.books.apirest.models;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,8 +20,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 @Entity
 @Table(name="books")
+@JsonIdentityInfo(
+		generator = ObjectIdGenerators.PropertyGenerator.class,
+		property = "id")
 public class Book implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
@@ -33,18 +46,25 @@ public class Book implements Serializable{
 	private int pages;
 	private String image;
 	
-	@ManyToMany
+	@ManyToMany(cascade=CascadeType.ALL)
 	@JoinTable(name="books_authors", 
 	joinColumns = @JoinColumn(name = "book_id"),
-	inverseJoinColumns = @JoinColumn(name = "author_id"))
-	private Set<Author> authors;
+	inverseJoinColumns = @JoinColumn(name = "author_id"))	
+	private List<Author> authors;
 	
 	@ManyToOne
 	@JoinColumn(name="location_id", nullable=false)
 	private Location location;
 	
-	@OneToMany(mappedBy = "book")
-	private Set<Rating> ratings;	
+	@OneToMany(cascade=CascadeType.ALL, mappedBy = "book")
+	@JsonManagedReference(value="ratingBook")
+	private List<Rating> ratings;
+	
+	@ElementCollection
+	@CollectionTable(name = "books_topics", joinColumns = @JoinColumn(name = "book_id"))
+	private List<String> topics;
+
+	private Date lastViewd;
 	
 	public Book() {
 
@@ -86,10 +106,10 @@ public class Book implements Serializable{
 	public void setImage(String image) {
 		this.image = image;
 	}
-	public Set<Author> getAuthors() {
+	public List<Author> getAuthors() {
 		return authors;
 	}
-	public void setAuthors(Set<Author> authors) {
+	public void setAuthors(List<Author> authors) {
 		this.authors = authors;
 	}
 	public Location getLocation() {
@@ -98,12 +118,28 @@ public class Book implements Serializable{
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-	public Set<Rating> getRatings() {
+
+	public List<String> getTopics() {
+		return topics;
+	}
+
+	public void setTopics(List<String> topics) {
+		this.topics = topics;
+	}
+	public Date getLastViewd() {
+		return lastViewd;
+	}
+
+	public void setLastViewd(Date lastViewd) {
+		this.lastViewd = lastViewd;
+	}
+
+	public List<Rating> getRatings() {
 		return ratings;
 	}
-	public void setRatings(Set<Rating> ratings) {
+
+	public void setRatings(List<Rating> ratings) {
 		this.ratings = ratings;
-	}
-	
+	}	
 
 }

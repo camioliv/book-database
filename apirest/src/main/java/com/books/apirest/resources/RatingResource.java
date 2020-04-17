@@ -1,10 +1,7 @@
 package com.books.apirest.resources;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.books.apirest.models.Rating;
 import com.books.apirest.repository.RatingRepository;
+import com.books.apirest.services.RatingService;
 
 @CrossOrigin
 @RestController
@@ -23,30 +21,25 @@ public class RatingResource {
 
 	@Autowired
 	RatingRepository ratingRepository;
+	
+	@Autowired
+	RatingService ratingService;
 
-	@GetMapping("/ratings")
-	public List<Rating> listRatings(){
-		return ratingRepository.findAll();
+	@GetMapping("/book/{bookId}/user/{userId}/rating")
+	public Rating getRating(@PathVariable(value="bookId") long bookId, @PathVariable(value="userId") long userId){
+		return ratingRepository.findOneByBookIdEqualsAndUserIdEquals(bookId, userId);
 	}
 	
-	@GetMapping("/rating/{id}")
-	public Rating listRatingById(@PathVariable(value="id") long id){
-		return ratingRepository.findById(id);
+	@PostMapping("/book/{bookId}/user/{userId}/rating")
+	public Rating saveRating(@PathVariable(value="bookId") long bookId, @PathVariable(value="userId") long userId, @RequestBody Rating rating) {
+		return ratingService.saveRating(bookId, userId, rating);
 	}
 	
-	@PostMapping("/rating")
-	public Rating  saveRating(@RequestBody Rating rating) {
-		return ratingRepository.save(rating);
+	@PutMapping("/book/{bookId}/user/{userId}/rating")
+	public Rating updateRating(@PathVariable(value="bookId") long bookId, @PathVariable(value="userId") long userId, @RequestBody Rating rating) {
+		return ratingService.saveRating(bookId, userId, rating);
 	}
 	
-	@DeleteMapping("/rating")
-	public void deleteRating(@RequestBody Rating rating) {
-		ratingRepository.delete(rating);
-	}
-	
-	@PutMapping("/rating")
-	public Rating updateRating(@RequestBody Rating rating) {
-		return ratingRepository.save(rating);
-	}
+
 	
 }

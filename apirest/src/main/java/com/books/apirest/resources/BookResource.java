@@ -2,6 +2,8 @@ package com.books.apirest.resources;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.books.apirest.repository.BookRepository;
@@ -26,37 +29,50 @@ public class BookResource {
 	BookRepository bookRepository;
 	
 	@Autowired
-	private BookService booksService;
+	private BookService bookService;
 	
 	@GetMapping("/books")
-	public List<Book> listBooks(){
-		return bookRepository.findAll();
+	public List<Book> listBooks(@RequestParam(value="query", required = false) String query){
+		return bookService.findBooks(query);
 	}
 	
+	@GetMapping("/books/less-than/{pages}")
+	public List<Book> listBooksLessThanPages(@PathVariable(value="pages") int pages){
+		return bookRepository.findAllByPagesIsLessThan(pages);
+	}
+
 	@GetMapping("/book/{id}")
 	public Book listBookById(@PathVariable(value="id") long id){
 		return bookRepository.findById(id);
 	}
 	
 	@PostMapping("/book")
-	public Book saveBook(@RequestBody Book book) {
+	public Book saveBook(@RequestBody @Valid Book book) {
 		return bookRepository.save(book);
 	}
 	
 	@DeleteMapping("/book")
-	public void deleteBook(@RequestBody Book book) {
+	public void deleteBook(@RequestBody @Valid Book book) {
 		bookRepository.delete(book);
 	}
 	
 	@PutMapping("/book")
-	public Book updateBook(@RequestBody Book book) {
+	public Book updateBook(@RequestBody @Valid Book book) {
 		return bookRepository.save(book);
 	}
 	
-	@GetMapping("/books/recomend")
-	public List<Book> recommendBooks(long user_id){
-		return booksService.recomendBooks(user_id);
+	@GetMapping("/books/recommend/{userId}")
+	public List<Book> recommendBooks(@PathVariable(value="userId") long userId){
+		return bookService.recomendBooks(userId);
+	}
+	
+	@GetMapping("/books/notViewdFrequently")
+	public List<Book> listByLastViewdDesc(){
+		return bookRepository.findTop10ByOrderByLastViewdDesc();
 	}	
 	
-	
+	@GetMapping("/books/user/{userId}/rating/{stars}")
+	public List<Book> getByRating(@PathVariable(value="userId") long userId, @PathVariable(value="stars") int stars) {
+		return bookRepository.findAllByRatingsStarsAndRatingsUserId(stars,userId);
+	}	
 }

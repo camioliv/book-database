@@ -21,12 +21,10 @@
                 label="ISBN"
                 required
               ></v-text-field>
-              <span class="green--text" v-show="bookInLibrary">
-                This book is in your library
-                <v-icon color="green">check</v-icon>
-              </span>
               <v-text-field label="Title" v-model="book.title" required></v-text-field>
-              <v-text-field label="Author"></v-text-field>
+              <div v-for="(author, index) in book.authors" v-bind:key="index">
+                <v-text-field label="Author" v-model="author.name"></v-text-field>
+              </div>
               <v-text-field label="Pages" v-model="book.pages" type="number"></v-text-field>
             </v-col>
             <v-col cols="10">
@@ -94,15 +92,16 @@ import Shelf from "@/services/shelves";
 import Box from "@/services/boxes";
 
 export default {
+  props: {
+    addBook: Boolean
+  },
   data: () => ({
-    addBook: false,
     addLocation: false,
     location: {
       name: ""
     },
     descriptionLimit: 30,
     disableFields: false,
-    bookInLibrary: false,
     refreshLocations: false,
     locations: {
       id: 0,
@@ -122,7 +121,7 @@ export default {
       title: "",
       pages: "",
       image: "",
-      authors: [],
+      authors: [{ name: "" }],
       location: {
         id: 0,
         name: ""
@@ -150,17 +149,26 @@ export default {
   },
   methods: {
     saveBook() {
-      Book.save(this.book).then(response => {
-        if (response.data()) {
-          alert("book added sucesfuly!"), this.clear(), (this.addBook = false);
-        }
-      });
+      Book.save(this.book)
+        .then({})
+        .catch(error => {
+          console.log(error);
+        });
+        this.clearBook();
     },
     saveLocation() {
       if (this.typeLocation == 1) {
         (this.shelf = this.location),
-          Shelf.save(this.shelf),
-          (this.addLocation = false);
+          Shelf.save(this.shelf)
+            .then(response => {
+              (this.book.location = response.data),
+                (this.addLocation = false),
+                (this.refreshLocations = true);
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        this.addLocation = false;
       } else if (this.typeLocation == 2) {
         (this.box = this.location),
           Box.save(this.box)
@@ -179,13 +187,24 @@ export default {
         (this.book.title = response.data.book.title),
           (this.book.pages = response.data.book.pages),
           (this.book.image = response.data.book.image);
+
+        if (response.data.book.authors.length > 0) {
+          (this.book.authors = []),
+            response.data.book.authors.forEach(item => {
+              var author = new Object();
+              author.name = item;
+              this.book.authors.push(author);
+            });
+        }
       });
     },
     clearBook() {
       (this.book.isbn = ""),
         (this.book.title = ""),
         (this.book.pages = ""),
-        (this.book.image = "");
+        (this.book.image = ""),
+        (this.book.authors = []),
+        (this.book.location = []);
     }
   },
   mounted() {
