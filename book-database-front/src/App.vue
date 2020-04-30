@@ -80,6 +80,7 @@
             </v-card>
           </v-col>
         </v-row>
+        
       </v-container>
     </v-content>
   </v-app>
@@ -167,7 +168,8 @@ export default {
         .catch(error => {
           console.log(error);
         });
-    }         
+    },
+             
   }
 };
 </script>

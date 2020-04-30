@@ -15,15 +15,10 @@
               <v-img v-bind:src="book.image"></v-img>
             </v-col>
             <v-col cols="6" sm="8" md="9">
-              <v-text-field
-                v-model="book.isbn"
-                v-on:change.native="searchBookExt"
-                label="ISBN"
-                required
-              ></v-text-field>
-              <v-text-field label="Title" v-model="book.title" required></v-text-field>
+              <v-text-field v-model="book.isbn" v-on:change.native="searchBookExt" label="ISBN"></v-text-field>
+              <v-text-field label="Title*" v-model="book.title"></v-text-field>
               <div v-for="(author, index) in book.authors" v-bind:key="index">
-                <v-text-field label="Author" v-model="author.name"></v-text-field>
+                <v-text-field label="Author*" v-model="author.name"></v-text-field>
               </div>
               <v-text-field label="Pages" v-model="book.pages" type="number"></v-text-field>
             </v-col>
@@ -39,8 +34,7 @@
                 hide-no-data
                 clearable
                 return-object
-                label="Location"
-                required
+                label="Location*"
               />
             </v-col>
             <v-col cols="2">
@@ -56,6 +50,8 @@
           <v-btn color="blue darken-1" text v-on:click="saveBook">Save</v-btn>
         </v-card-actions>
       </v-card>
+
+      <v-alert :type="alert.type" v-model="alert.visible" dismissible>{{alert.message}}</v-alert>
     </v-dialog>
     <v-dialog v-model="addLocation" max-width="500px">
       <v-card>
@@ -65,11 +61,11 @@
         <v-card-text class="text-left text-light condensed">
           <v-row>
             <v-col cols="6" sm="8" md="9">
-              <v-text-field label="Description" v-model="location.name" required></v-text-field>
+              <v-text-field label="Description*" v-model="location.name" required></v-text-field>
             </v-col>
             <v-col cols="2" required>
               <v-radio-group v-model="typeLocation">
-                <v-radio true-value label="Shelf" value="1"></v-radio>
+                <v-radio label="Shelf" value="1"></v-radio>
                 <v-radio label="Box" value="2"></v-radio>
               </v-radio-group>
             </v-col>
@@ -81,6 +77,7 @@
           <v-btn color="blue darken-1" text v-on:click="saveLocation">Save</v-btn>
         </v-card-actions>
       </v-card>
+      <v-alert :type="alert2.type" v-model="alert2.visible" dismissible>{{alert2.message}}</v-alert>
     </v-dialog>
   </v-row>
 </template>
@@ -109,12 +106,28 @@ export default {
     },
     loading: false,
     searchLocations: null,
-    typeLocation: null,
+    typeLocation: "1",
     box: {
       name: ""
     },
     shelf: {
       name: ""
+    },
+    alert: {
+      type: "",
+      message: "",
+      visible: false
+    },
+
+    alert2: {
+      type: "",
+      message: "",
+      visible: false
+    },
+    rules: {
+      titleValid: true,
+      authorValid: true,
+      locationValid: true
     },
     book: {
       isbn: "",
@@ -149,38 +162,62 @@ export default {
   },
   methods: {
     saveBook() {
-      Book.save(this.book)
-        .then({})
-        .catch(error => {
-          console.log(error);
-        });
-        this.clearBook();
+      if (this.validateBook()) {
+        Book.save(this.book)
+          .then(response => {
+            if (response.data) {
+              this.Message("success", "Book saved successfully");
+              this.clearBook();
+            }
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      } else {
+        this.Message("error", "The required fields were not informed");
+      }
     },
     saveLocation() {
-      if (this.typeLocation == 1) {
-        (this.shelf = this.location),
-          Shelf.save(this.shelf)
-            .then(response => {
-              (this.book.location = response.data),
-                (this.addLocation = false),
-                (this.refreshLocations = true);
-            })
-            .catch(error => {
-              console.log(error);
-            });
-        this.addLocation = false;
-      } else if (this.typeLocation == 2) {
-        (this.box = this.location),
-          Box.save(this.box)
-            .then(response => {
-              (this.book.location = response.data),
-                (this.addLocation = false),
-                (this.refreshLocations = true);
-            })
-            .catch(error => {
-              console.log(error);
-            });
+      if (this.validateLocation()) {
+        if (this.typeLocation == 1) {
+          (this.shelf = this.location),
+            Shelf.save(this.shelf)
+              .then(response => {
+                this.MessageLocation("succes", "Location added susccefully");
+                (this.book.location = response.data),
+                  (this.addLocation = false),
+                  (this.refreshLocations = true);
+              })
+              .catch(error => {
+                console.log(error);
+              });
+          this.addLocation = false;
+        } else if (this.typeLocation == 2) {
+          (this.box = this.location),
+            Box.save(this.box)
+              .then(response => {
+                (this.book.location = response.data),
+                  (this.addLocation = false),
+                  (this.refreshLocations = true);
+              })
+              .catch(error => {
+                console.log(error);
+              });
+        }
+      } else {
+        this.MessageLocation("error", "The required fields were not informed"); 
       }
+    },
+
+    Message(type, message) {
+      (this.alert.visible = true),
+        (this.alert.type = type),
+        (this.alert.message = message);
+    },
+    MessageLocation(type, message) {
+      (this.alert2.visible = true),
+        (this.alert2.type = type),
+        (this.alert2.message = message);
     },
     searchBookExt() {
       Book.extSearchISBN(this.book.isbn).then(response => {
@@ -198,13 +235,32 @@ export default {
         }
       });
     },
+    validateBook: function() {
+      (this.rules.titleValid = this.book.title.length > 0),
+        (this.rules.authorValid = this.book.authors.length > 0),
+        (this.rules.locationValid = this.book.location.name.length > 0);
+
+      return (
+        this.rules.titleValid &&
+        this.rules.authorValid &&
+        this.rules.locationValid
+      );
+    },
+    validateLocation: function() {
+      return (
+        this.location.name.length > 0
+      );
+    },
     clearBook() {
       (this.book.isbn = ""),
         (this.book.title = ""),
         (this.book.pages = ""),
         (this.book.image = ""),
-        (this.book.authors = []),
-        (this.book.location = []);
+        (this.authors = [{ name: "" }]),
+        (this.location = {
+          id: 0,
+          name: ""
+        });
     }
   },
   mounted() {

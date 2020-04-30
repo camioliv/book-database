@@ -39,18 +39,10 @@
                 required
               ></v-autocomplete>
             </v-col>
-            <v-col cols="2">
-              <v-btn v-on:click="addLocation = true" class="ma-3" outlined color="orange">
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
-            </v-col>
           </v-row>
-          <v-rating
-            v-model="book.ratings.stars"
-            background-color="orange lighten-3"
-            color="orange"
-            medium
-          ></v-rating>
+          <v-col cols="6">
+            <v-rating v-model="book.ratings.stars" background-color="orange" color="orange" medium></v-rating>
+          </v-col>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -58,32 +50,7 @@
           <v-btn color="blue darken-1" text v-on:click="saveBook">Save</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
-    <v-dialog v-model="addLocation" max-width="500px">
-      <v-card>
-        <v-card-title>
-          <span class="headline grey--text text--darken-2">Add Location</span>
-        </v-card-title>
-        <v-card-text class="text-left text-light condensed">
-          <v-row>
-            <v-col cols="6" sm="8" md="9">
-              <v-text-field label="Description" v-model="location.name" required></v-text-field>
-            </v-col>
-            <v-col cols="2" required>
-              <v-radio-group v-model="typeLocation">
-                <v-radio true-value label="Shelf" value="1"></v-radio>
-                <v-radio label="Box" value="2"></v-radio>
-              </v-radio-group>
-            </v-col>
-          </v-row>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text v-on:click="addLocation = false">Close</v-btn>
-          <v-btn color="blue darken-1" text v-on:click="saveLocation">Save</v-btn>
-        </v-card-actions>
-      </v-card>
-      <v-alert v-model="alert" :type="type" dismissible="true">{{message}}</v-alert>
+       <v-alert :type="alert.type" v-model="alert.visible" dismissible>{{alert.message}}</v-alert>
     </v-dialog>
   </v-row>
 </template>
@@ -91,8 +58,6 @@
 <script>
 import Book from "@/services/books";
 import Location from "@/services/locations";
-import Shelf from "@/services/shelves";
-import Box from "@/services/boxes";
 
 export default {
   props: {
@@ -100,10 +65,11 @@ export default {
     bookParent: Object
   },
   data: () => ({
-    alert: false,
-    message: "",
-    type: "success",
-    addLocation: false,
+    alert: {
+      type: "",
+      message: "",
+      visible: false
+    },
     location: {
       name: ""
     },
@@ -114,13 +80,6 @@ export default {
     },
     loading: false,
     searchLocations: null,
-    typeLocation: null,
-    box: {
-      name: ""
-    },
-    shelf: {
-      name: ""
-    },
     book: {
       isbn: "",
       title: "",
@@ -153,7 +112,7 @@ export default {
           this.locations = response.data;
         })
         .catch(error => {
-          (this.alert = true), (this.message = error), (this.type = "error");
+          console.log(error);
         })
         .finally(
           () => ((this.loading = false), (this.refreshLocations = false))
@@ -170,59 +129,29 @@ export default {
     }
   },
   methods: {
-    saveBook() {
+    saveBook(message) {
       this.book.ratings.user.id = 1;
       Book.update(this.book)
-        .then(
-          (this.alert = true),
-          (this.message = "Book Sucefully Saved"),
-          (this.type = "success")
-        )
+        .then(response => {
+          if (response.data) {
+            if (message){
+            this.Message("success", "Book successfully updated");
+            }
+          }
+        })
         .catch(error => {
-          (this.alert = true), (this.message = error), (this.type = "error");
+          console.log(error);
         });
     },
     saveAndClose() {
       this.saveBook();
       this.$emit("update:viewBook", false);
     },
-    saveLocation() {
-      if (this.typeLocation == 1) {
-        (this.shelf = this.location),
-          Shelf.save(this.shelf)
-            .then(response => {
-              (this.alert = true),
-                (this.message = "Shelf Sucefully Saved"),
-                (this.type = "success"),
-                (this.book.location = response.data),
-                (this.addLocation = false),
-                (this.refreshLocations = true);
-            })
-            .catch(error => {
-              (this.alert = true),
-                (this.message = error),
-                (this.type = "error");
-            });
-        this.addLocation = false;
-      } else if (this.typeLocation == 2) {
-        (this.box = this.location),
-          Box.save(this.box)
-            .then(response => {
-              (this.alert = true),
-                (this.message = "Shelf Sucefully Saved"),
-                (this.type = "success"),
-                (this.book.location = response.data),
-                (this.addLocation = false),
-                (this.refreshLocations = true);
-            })
-            .catch(error => {
-              (this.alert = true),
-                (this.message = error),
-                (this.type = "error");
-            });
-      }
+    Message(type, message) {
+      (this.alert.visible = true),
+        (this.alert.type = type),
+        (this.alert.message = message);
     },
-
     searchBook() {
       Book.listById(this.props.bookId).then(response => {
         this.book = response.data;
@@ -247,6 +176,7 @@ export default {
     }
   },
   mounted() {
+    this.alert.visible= false,
     Location.list()
       .then(response => {
         this.locations = response.data;
