@@ -6,4 +6,5 @@ import com.books.apirest.models.Location;
 
 public interface LocationRepository extends JpaRepository<Location, Long> {
 	Location findById(long id);
+	Location findByName(String name);
 }

@@ -73,7 +73,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text v-on:click="addLocation = false">Close</v-btn>
+          <v-btn color="blue darken-1" text v-on:click="closeLocation">Close</v-btn>
           <v-btn color="blue darken-1" text v-on:click="saveLocation">Save</v-btn>
         </v-card-actions>
       </v-card>
@@ -148,7 +148,7 @@ export default {
       if (this.loading) return;
       if (val == null) return;
       this.loading = true;
-      Location.list()
+      Location.list(val)
         .then(response => {
           this.locations = response.data;
         })
@@ -158,6 +158,12 @@ export default {
         .finally(
           () => ((this.loading = false), (this.refreshLocations = false))
         );
+    },
+    addLocation(val){
+      if (val){
+        location.name = "",
+        alert.visible = false;
+      }
     }
   },
   methods: {
@@ -182,24 +188,18 @@ export default {
         if (this.typeLocation == 1) {
           (this.shelf = this.location),
             Shelf.save(this.shelf)
-              .then(response => {
-                this.MessageLocation("succes", "Location added susccefully");
-                (this.book.location = response.data),
-                  (this.addLocation = false),
-                  (this.refreshLocations = true);
-              })
+              .then(
+                this.MessageLocation("success", "Location added susccefully")
+              )
               .catch(error => {
                 console.log(error);
               });
-          this.addLocation = false;
         } else if (this.typeLocation == 2) {
           (this.box = this.location),
             Box.save(this.box)
-              .then(response => {
-                (this.book.location = response.data),
-                  (this.addLocation = false),
-                  (this.refreshLocations = true);
-              })
+              .then(
+                this.MessageLocation("success", "Location added susccefully")
+              )
               .catch(error => {
                 console.log(error);
               });
@@ -250,6 +250,11 @@ export default {
       return (
         this.location.name.length > 0
       );
+    },
+    closeLocation(){
+      this.addLocation = false,
+      this.refreshLocations = true,
+      this.searchLocations = this.location.name
     },
     clearBook() {
       (this.book.isbn = ""),
