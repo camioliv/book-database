@@ -1,10 +1,12 @@
 package com.books.apirest.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.books.apirest.models.Location;
 
 public interface LocationRepository extends JpaRepository<Location, Long> {
 	Location findById(long id);
-	Location findByName(String name);
+	List<Location> findByName(String name);
 }

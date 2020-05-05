@@ -53,14 +53,14 @@
     </v-container>
     <v-content>
       <AddBook v-bind:addBook="addBook"></AddBook>
-      <ViewBook v-bind:viewBook.sync="viewBook" v-bind:bookParent="book" v-bind:user="user" ></ViewBook>
+      <ViewBook v-bind:viewBook.sync="viewBook" v-bind:bookParent="book" ></ViewBook>
       <!--ListOfBooks -->
       <v-container>
         <v-card flat class="text-center text-light" v-if="!books.length">
           <p>Sorry. No books were found...</p>
         </v-card>
 
-        <v-row justify="right">
+        <v-row >
           <v-col v-for="book of books" :key="book.id" cols="auto">
             <v-card flat width="320" @click="OpenBook(book)">
               <v-row class="fill-height" align="center" justify="center">

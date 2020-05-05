@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.books.apirest.models.Location;
@@ -25,7 +26,7 @@ public class LocationResource {
 	LocationRepository locationRepository;
 	
 	@GetMapping("/locations")
-	public List<Location> listLocations(){
+	public List<Location> listLocations(@RequestParam(value="name", required = false) String name){
 		return locationRepository.findAll();
 	}	
 	
