@@ -125,6 +125,43 @@ export default {
         var currentDate = new Date();
         this.book.lastViewd = currentDate;
         this.saveBook();
+      } else {
+        // You should clear data when you close dialogs. There are MUCH easier ways to do this but it would
+        // require extensive refactoring here.
+        this.alert = {
+          type: "",
+            message: "",
+            visible: false
+        }
+        this.location = {
+          name: ""
+        }
+        this.refreshLocations = false
+        this.locations = {
+          id: 0,
+          name: ""
+        }
+        this.loading = false
+        this.searchLocations = null
+        this.book = {
+          isbn: "",
+          title: "",
+          pages: "",
+          image: "",
+          lastViewd: "",
+          authors: [{ name: "" }],
+          location: {
+          id: 0,
+            name: ""
+          },
+          ratings: {
+            user: {
+              id: 1,
+                name: "Guest"
+            },
+            stars: 0
+          }
+        }
       }
     }
   },
