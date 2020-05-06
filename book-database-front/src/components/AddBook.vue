@@ -1,10 +1,10 @@
 <template>
   <v-row justify="center">
-    <v-btn v-on:click="addBook = true" class="ma-2" outlined color="orange">
+    <v-btn v-on:click="showDialog = true" class="ma-2" outlined color="orange">
       Add Book
       <v-icon>mdi-plus</v-icon>
     </v-btn>
-    <v-dialog v-model="addBook" persistent max-width="750px">
+    <v-dialog v-model="showDialog" persistent max-width="750px">
       <v-card>
         <v-card-title>
           <span class="headline grey--text text--darken-2">Add Book</span>
@@ -46,7 +46,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text v-on:click="addBook = false">Close</v-btn>
+          <v-btn color="blue darken-1" text v-on:click="showDialog = false">Close</v-btn>
           <v-btn color="blue darken-1" text v-on:click="saveBook">Save</v-btn>
         </v-card-actions>
       </v-card>
@@ -89,21 +89,16 @@ import Shelf from "@/services/shelves";
 import Box from "@/services/boxes";
 
 export default {
-  props: {
-    addBook: Boolean
-  },
   data: () => ({
+    showDialog: false,
     addLocation: false,
     location: {
-      name: ""
+      name: ''
     },
     descriptionLimit: 30,
     disableFields: false,
     refreshLocations: false,
-    locations: {
-      id: 0,
-      name: ""
-    },
+    locations: [],
     loading: false,
     searchLocations: null,
     typeLocation: "1",
@@ -144,9 +139,22 @@ export default {
 
   watch: {
     searchLocations(val) {
-      if (this.locations.length > 0 && !this.refreshLocations) return;
-      if (this.loading) return;
-      if (val == null) return;
+      this.getLocations(val)
+    },
+    addLocation(val){
+      if (val){
+        location.name = "",
+        alert.visible = false;
+      }
+    },
+    showDialog (val) {
+      if (val) {
+        this.getLocations(null)
+      }
+    }
+  },
+  methods: {
+    getLocations(val) {
       this.loading = true;
       Location.list(val)
         .then(response => {
@@ -155,18 +163,11 @@ export default {
         .catch(error => {
           console.log(error);
         })
-        .finally(
-          () => ((this.loading = false), (this.refreshLocations = false))
-        );
+        .finally(() => {
+          this.loading = false
+          this.refreshLocations = false
+        });
     },
-    addLocation(val){
-      if (val){
-        location.name = "",
-        alert.visible = false;
-      }
-    }
-  },
-  methods: {
     saveBook() {
       if (this.validateBook()) {
         Book.save(this.book)
@@ -178,6 +179,9 @@ export default {
           })
           .catch(error => {
             console.log(error);
+          })
+          .finally(() => {
+            this.showDialog = false
           });
       } else {
         this.Message("error", "The required fields were not informed");
@@ -252,8 +256,8 @@ export default {
       );
     },
     closeLocation(){
-      this.addLocation = false,
-      this.refreshLocations = true,
+      this.addLocation = false
+      this.refreshLocations = true
       this.searchLocations = this.location.name
     },
     clearBook() {

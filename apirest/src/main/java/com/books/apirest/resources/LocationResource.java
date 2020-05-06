@@ -24,8 +24,9 @@ public class LocationResource {
 
 	@Autowired
 	LocationRepository locationRepository;
-	
+
 	@GetMapping("/locations")
+	// COMMENT: The name parameter is not connected to anything.
 	public List<Location> listLocations(@RequestParam(value="name", required = false) String name){
 		return locationRepository.findAll();
 	}	

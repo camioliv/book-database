@@ -36,7 +36,7 @@ public class BookService {
 			return bookRepository.findAll();
 		}else {
 			query = query.toLowerCase();
-			return bookRepository.findAllByTitleContainingOrIsbnEqualsOrAuthorsNameContainingOrTopicsEquals(query, query, query, query);
+			return bookRepository.findAllByTitleContainingIgnoreCaseOrIsbnEqualsOrAuthorsNameContainingIgnoreCaseOrTopicsEquals(query, query, query, query);
 		}
 	}	
 	
